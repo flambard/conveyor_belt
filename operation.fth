@@ -1,0 +1,48 @@
+( words for controlling the nailbed and the thrower )
+
+MA CONSTANT NAILBED ( nailbed motor )
+MB CONSTANT THROWER ( thrower motor )
+
+S1 CONSTANT NAILBED-SENSOR ( nailbed depth position sensor )
+
+NAILBED-SENSOR IS-TOUCH
+
+50 CONSTANT THROWER-WORK-TIME ( 0.5 seconds )
+
+: DELAY ( 10ms -- )
+   9 timer_SET
+   BEGIN
+      9 timer_GET 0=
+   UNTIL ;
+
+: UNTIL-TOUCH ( sensor -- )
+   BEGIN
+      DUP TOUCH?
+   UNTIL DROP ;
+
+: RAISE-THROWER ( -- )
+   FORWARD THROWER MOTOR
+   THROWER-WORK-TIME DELAY
+   STOP THROWER MOTOR ;
+
+: LOWER-THROWER ( -- )
+   BACKWARD THROWER MOTOR
+   THROWER-WORK-TIME DELAY
+   FLOAT THROWER MOTOR ;
+
+( these are the words used by LabVIEW )
+
+: DISCARD ( -- )
+   RAISE-THROWER
+   50 DELAY
+   LOWER-THROWER ;
+
+: LOWER-NAILBED ( -- )
+   FORWARD NAILBED MOTOR
+   NAILBED-SENSOR UNTIL-TOUCH
+   STOP NAILBED MOTOR ;
+
+: RAISE-NAILBED ( -- )
+   BACKWARD NAILBED MOTOR
+   500 DELAY
+   STOP NAILBED MOTOR ;
